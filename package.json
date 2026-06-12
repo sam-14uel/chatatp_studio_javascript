@@ -1,28 +1,52 @@
 {
   "name": "@chatatp/studio",
   "version": "0.1.0",
-  "description": "Official JavaScript SDK for the ChatATP Studio Developer API",
+  "description": "Official TypeScript/JavaScript SDK for ChatATP Studio Developer API",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "types": "./dist/types/index.d.ts"
+      "require": "./dist/cjs/index.js"
     }
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "sideEffects": false,
-  "files": ["dist", "README.md"],
+  "keywords": [
+    "chatatp",
+    "chatatp-studio",
+    "ai-agents",
+    "sdk",
+    "typescript-sdk",
+    "api-client",
+    "chatbot",
+    "llm",
+    "agent-framework"
+  ],
+  "author": "Samuel Obinna Chimdi <sammyfirst6@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sam-14uel/chatatp_studio_javascript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sam-14uel/chatatp_studio_javascript/issues"
+  },
+  "homepage": "https://studio.chat-atp.com/docs",
   "scripts": {
     "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && tsc -p tsconfig.types.json",
     "test": "jest",
     "lint": "eslint src --ext .ts",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["chatatp", "ai", "agents", "chatbot", "sdk"],
-  "author": "ChatATP",
-  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.0",
@@ -30,7 +54,7 @@
     "ts-jest": "^29.1.4",
     "typescript": "^5.4.5"
   },
-  "engines": {
-    "node": ">=18"
+  "dependencies": {
+    "@chatatp/studio": "^0.1.0"
   }
 }
