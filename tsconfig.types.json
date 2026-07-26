@@ -1,10 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "ES2020",
+    "moduleResolution": "Bundler",
     "outDir": "dist/types",
-    "emitDeclarationOnly": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "emitDeclarationOnly": true
   }
 }

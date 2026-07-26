@@ -65,11 +65,14 @@ export interface Usage {
 export type StreamEventType =
   | "conversation.message.created"
   | "message.created"
+  | "tool.execution.started"
   | "tool.execution.completed"
+  | "agent.response.delta"
   | "agent.response.completed"
-  | "completion.completed";
+  | "completion.completed"
+  | "error";
 
-export interface StreamEvent<T = unknown> {
+export interface StreamEvent<T = any> {
   type: StreamEventType;
   data: T;
 }
