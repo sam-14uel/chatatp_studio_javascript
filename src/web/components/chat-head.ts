@@ -18,7 +18,7 @@ export class ChatATPChatHead extends LitElement {
       align-items: center;
       justify-content: center;
       border: none;
-      background: none;
+      background: linear-gradient(135deg, var(--chatatp-primary, #0ea5e9), var(--chatatp-secondary, #6366f1));
       cursor: pointer;
       padding: 0;
       transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
@@ -26,15 +26,15 @@ export class ChatATPChatHead extends LitElement {
     }
     
     .launcher-btn.with-text {
-      background: var(--chatatp-background, #ffffff);
-      border: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
+      background: linear-gradient(135deg, rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.18), rgba(var(--chatatp-primary-rgb, 14, 165, 233), 0.10)), color-mix(in srgb, var(--chatatp-secondary) 7%, #ffffff);
+      border: 1px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.35);
       padding: 4px 20px 4px 4px;
       gap: 12px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
     
     .launcher-btn.with-text:hover {
-      background: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 1);
+      background: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.18);
     }
     
     .launcher-btn:hover {
@@ -58,9 +58,9 @@ export class ChatATPChatHead extends LitElement {
       position: relative;
       border-radius: 50%;
       padding: 2px;
-      background: var(--chatatp-background, #ffffff);
+      background: linear-gradient(135deg, var(--chatatp-primary, #0ea5e9), var(--chatatp-secondary, #6366f1));
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      border: 2px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 0.4);
+      border: 2px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.35);
     }
     
     .launcher-btn.with-text .avatar-inner {

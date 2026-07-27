@@ -204,10 +204,35 @@ MIT
 
 ### Layout behavior
 
-- The launcher is visible for `popup`, `sidebar`, and `fullscreen`; clicking it opens the configured mode.
+- The launcher is visible for `popup`, `sidebar`, and routed `fullscreen`; clicking it opens the configured mode or navigates to `fullscreenUrl`.
 - `popup` renders as a floating corner overlay above the current page, like a normal chatbot widget.
 - `sidebar` opens as a fixed side panel and shifts `sidebarTarget` with padding instead of covering the main app. Closing or switching away removes that padding.
-- `fullscreen` navigates to `fullscreenUrl` when provided; without it, it renders as an embedded full-size panel.
+- `fullscreen` navigates to `fullscreenUrl` when provided; on the dedicated route, omit `fullscreenUrl` to render the full-page copilot screen.
+
+### Fullscreen route component
+
+Use the floating widget with `fullscreenUrl` on normal pages, then register a dedicated route that renders the same Copilot in `fullscreen` mode without `fullscreenUrl`:
+
+```tsx
+// App shell
+<Copilot
+  apiKey="YOUR_API_KEY"
+  agentId={7}
+  mode="popup"
+  fullscreenUrl="/copilot"
+/>
+
+// /copilot route
+<Copilot
+  apiKey="YOUR_API_KEY"
+  agentId={7}
+  mode="fullscreen"
+  themePrimary="blue"
+  themeSecondary="orange"
+/>
+```
+
+Fullscreen mode renders a full-page ChatGPT-style screen with an expandable/collapsible conversation sidebar.
 
 ### React icon quick actions
 

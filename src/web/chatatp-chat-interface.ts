@@ -101,13 +101,13 @@ export class ChatATPChatInterface extends LitElement {
       position: relative;
     }
     .message-row.user .message-bubble {
-      background-color: var(--chatatp-primary, #0ea5e9);
+      background: linear-gradient(135deg, var(--chatatp-primary, #0ea5e9), var(--chatatp-secondary, #6366f1));
       color: var(--chatatp-primary-foreground, #ffffff);
       border-bottom-right-radius: 2px;
       white-space: pre-wrap;
     }
     .message-row.agent .message-bubble {
-      background-color: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 1);
+      background-color: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.10);
       color: var(--chatatp-foreground, #0f172a);
       border-bottom-left-radius: 2px;
     }
@@ -174,7 +174,8 @@ export class ChatATPChatInterface extends LitElement {
       min-height: 40px;
       max-height: 128px;
       outline: none;
-      color: var(--chatatp-foreground, #0f172a);
+      color: var(--chatatp-foreground, #0f172a) !important;
+      caret-color: var(--chatatp-primary, #0ea5e9);
       font-family: inherit;
     }
     
@@ -185,7 +186,7 @@ export class ChatATPChatInterface extends LitElement {
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background-color: var(--chatatp-primary, #0ea5e9);
+      background: linear-gradient(135deg, var(--chatatp-primary, #0ea5e9), var(--chatatp-secondary, #6366f1));
       color: white;
       border: none;
       cursor: pointer;
@@ -199,6 +200,79 @@ export class ChatATPChatInterface extends LitElement {
       background-color: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 1);
       color: var(--chatatp-foreground, #0f172a);
     }
+
+
+    .page-shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      background: linear-gradient(135deg, rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.16), var(--chatatp-background, #ffffff));
+    }
+    .page-shell.collapsed { grid-template-columns: 72px minmax(0, 1fr); }
+    .page-sidebar {
+      border-right: 1px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.2);
+      background: color-mix(in srgb, var(--chatatp-secondary) 10%, #ffffff);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .page-sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px;
+      border-bottom: 1px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.16);
+    }
+    .sidebar-toggle, .sidebar-new-chat {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.22);
+      background: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.10);
+      color: var(--chatatp-foreground, #0f172a);
+      cursor: pointer;
+    }
+    .sidebar-toggle { width: 34px; }
+    .sidebar-new-chat { flex: 1; gap: 8px; padding: 0 10px; font-size: 0.875rem; }
+    .page-shell.collapsed .sidebar-new-chat span, .page-shell.collapsed .sidebar-title, .page-shell.collapsed .session-title { display: none; }
+    .page-sessions {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .session-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      background: transparent;
+      color: var(--chatatp-foreground, #0f172a);
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+    .session-button:hover { background: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.12); }
+    .session-button.active { background: rgba(var(--chatatp-primary-rgb, 14, 165, 233), 0.14); color: var(--chatatp-primary, #0ea5e9); }
+    .page-main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      height: 100vh;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      background: var(--chatatp-background, #ffffff);
+      box-shadow: 0 0 0 1px rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.08);
+    }
+
   `;
 
   @property({ type: String }) agentId = '';
@@ -220,6 +294,7 @@ export class ChatATPChatInterface extends LitElement {
   @state() isGenerating = false;
   @state() conversationId : number | null = null;
   @state() streamStatus : string | null = null;
+  @state() historyCollapsed = false;
 
   @query('.messages-area') private messagesArea!: HTMLElement;
   @query('.input-box') private inputBox!: HTMLTextAreaElement;
@@ -487,7 +562,31 @@ export class ChatATPChatInterface extends LitElement {
     `;
   }
 
-  render() {
+
+
+  private get isFullscreenLayout() {
+    return this.mode === 'fullscreen' || this.mode === 'fullpage';
+  }
+
+  private renderSessionButton(session: any) {
+    const active = this.conversationId?.toString() === session.id?.toString();
+    return html`
+      <button class="session-button ${active ? 'active' : ''}" @click=${() => this.switchSession(session.id)} title=${session.title || 'Conversation'}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+        <span class="session-title">${session.title || 'Conversation'}</span>
+      </button>
+    `;
+  }
+
+  private renderChatSurface() {
+    return html`
+      ${this.renderHeader()}
+      ${this.renderMessages()}
+      ${this.renderInput()}
+    `;
+  }
+
+  private renderHeader() {
     return html`
       <div class="chat-header">
         <chatatp-copilot-avatar .size=${28}></chatatp-copilot-avatar>
@@ -496,7 +595,7 @@ export class ChatATPChatInterface extends LitElement {
             .title=${"New Chat"} 
             .sessions=${this.sessions}
             .activeId=${this.conversationId?.toString() || ''}
-            @new-chat=${this.startNewChat}
+            @new-chat=${() => this.startNewChat()}
             @switch-session=${(e: CustomEvent) => this.switchSession(e.detail)}
           ></chatatp-history-menu>
           <div style="font-size: 0.75rem; color: var(--chatatp-muted-foreground, #64748b); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -505,20 +604,24 @@ export class ChatATPChatInterface extends LitElement {
         </div>
 
         <div class="header-actions">
-          <button class="icon-btn" @click=${this.startNewChat} title="New chat">
+          <button class="icon-btn" @click=${() => this.startNewChat()} title="New chat">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           </button>
           <chatatp-expand-menu 
             .switchLabel=${this.mode === 'popup' ? "Switch to sidebar" : "Switch to popup"}
-            @expand=${() => this.dispatchEvent(new CustomEvent('expand'))}
-            @switch-mode=${() => this.dispatchEvent(new CustomEvent('switch-mode'))}
+            @expand=${() => this.dispatchEvent(new CustomEvent('expand', { bubbles: true, composed: true }))}
+            @switch-mode=${() => this.dispatchEvent(new CustomEvent('switch-mode', { bubbles: true, composed: true }))}
           ></chatatp-expand-menu>
           <button class="icon-btn" @click=${() => this.dispatchEvent(new CustomEvent('closeWindow'))} title="Close">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
           </button>
         </div>
       </div>
+    `;
+  }
 
+  private renderMessages() {
+    return html`
       <div class="messages-area">
         ${this.messages.length === 0 ? html`
           <chatatp-empty-state 
@@ -554,7 +657,11 @@ export class ChatATPChatInterface extends LitElement {
           </div>
         `)}
       </div>
-      
+    `;
+  }
+
+  private renderInput() {
+    return html`
       <div class="input-area">
         <div class="input-wrapper">
           <textarea 
@@ -578,6 +685,34 @@ export class ChatATPChatInterface extends LitElement {
             `
           }
         </div>
+      </div>
+    `;
+  }
+
+  render() {
+    if (!this.isFullscreenLayout) {
+      return this.renderChatSurface();
+    }
+
+    return html`
+      <div class="page-shell ${this.historyCollapsed ? 'collapsed' : ''}">
+        <aside class="page-sidebar">
+          <div class="page-sidebar-header">
+            <button class="sidebar-toggle" @click=${() => this.historyCollapsed = !this.historyCollapsed} title="Toggle conversations">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+            </button>
+            <button class="sidebar-new-chat" @click=${() => this.startNewChat()}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+              <span>New chat</span>
+            </button>
+          </div>
+          <div class="page-sessions">
+            ${this.sessions.map((session) => this.renderSessionButton(session))}
+          </div>
+        </aside>
+        <main class="page-main">
+          ${this.renderChatSurface()}
+        </main>
       </div>
     `;
   }

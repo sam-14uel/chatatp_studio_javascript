@@ -62,7 +62,7 @@ export class ChatATPExpandMenu extends PopoverBase {
       color: var(--chatatp-foreground, #0f172a);
       transition: background-color 0.2s;
     }
-    .btn:hover { background-color: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 1); }
+    .btn:hover { background-color: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.14); }
     .btn-primary { width: 24px; border-top-right-radius: 0; border-bottom-right-radius: 0; }
     .btn-chevron { width: 16px; border-top-left-radius: 0; border-bottom-left-radius: 0; }
     
@@ -71,7 +71,7 @@ export class ChatATPExpandMenu extends PopoverBase {
       top: 100%;
       right: 0;
       margin-top: 6px;
-      background: var(--chatatp-card, #ffffff);
+      background: color-mix(in srgb, var(--chatatp-secondary) 8%, #ffffff);
       border: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
       border-radius: 8px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -94,7 +94,7 @@ export class ChatATPExpandMenu extends PopoverBase {
       color: var(--chatatp-foreground, #0f172a);
     }
     .menu-item:hover {
-      background-color: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 0.6);
+      background-color: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.14);
     }
     .icon { color: var(--chatatp-muted-foreground, #64748b); }
   `;
@@ -104,7 +104,7 @@ export class ChatATPExpandMenu extends PopoverBase {
   render() {
     return html`
       <div class="split-btn">
-        <button class="btn btn-primary" title="Expand to fullscreen" @click=${() => this.dispatchEvent(new CustomEvent('expand'))}>
+        <button class="btn btn-primary" title="Expand to fullscreen" @click=${() => this.dispatchEvent(new CustomEvent('expand', { bubbles: true, composed: true }))}>
           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
         </button>
         <button class="btn btn-chevron" title="More layout options" @click=${this.toggleOpen}>
@@ -114,7 +114,7 @@ export class ChatATPExpandMenu extends PopoverBase {
       
       ${this.open ? html`
         <div class="popover">
-          <button class="menu-item" @click=${() => { this.dispatchEvent(new CustomEvent('switch-mode')); this.open = false; }}>
+          <button class="menu-item" @click=${() => { this.dispatchEvent(new CustomEvent('switch-mode', { bubbles: true, composed: true })); this.open = false; }}>
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
             ${this.switchLabel}
           </button>
@@ -151,7 +151,7 @@ export class ChatATPHistoryMenu extends PopoverBase {
       color: var(--chatatp-foreground, #0f172a);
       transition: background-color 0.2s;
     }
-    .title-btn:hover { background-color: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 0.5); }
+    .title-btn:hover { background-color: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.14); }
     .title-text {
       font-size: 0.875rem;
       font-weight: 600;
@@ -166,7 +166,7 @@ export class ChatATPHistoryMenu extends PopoverBase {
       top: 100%;
       left: 0;
       margin-top: 6px;
-      background: var(--chatatp-card, #ffffff);
+      background: color-mix(in srgb, var(--chatatp-secondary) 8%, #ffffff);
       border: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
       border-radius: 8px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -231,8 +231,8 @@ export class ChatATPHistoryMenu extends PopoverBase {
       color: var(--chatatp-foreground, #0f172a);
       transition: background-color 0.2s;
     }
-    .history-item:hover { background-color: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 0.6); }
-    .history-item.active { background-color: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 0.4); }
+    .history-item:hover { background-color: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.14); }
+    .history-item.active { background-color: rgba(var(--chatatp-primary-rgb, 14, 165, 233), 0.14); color: var(--chatatp-primary, #0ea5e9); }
     .history-item .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
     .history-item .time { font-size: 10px; color: var(--chatatp-muted-foreground, #64748b); margin-left: auto; }
 
@@ -292,7 +292,7 @@ export class ChatATPHistoryMenu extends PopoverBase {
                 <div style="padding: 4px 0;">
                   <div class="group-label">Today</div>
                   ${today.map(s => html`
-                    <button class="history-item ${this.activeId === s.id ? 'active' : ''}" @click=${() => { this.dispatchEvent(new CustomEvent('switch-session', { detail: s.id })); this.open = false; }}>
+                    <button class="history-item ${this.activeId === s.id ? 'active' : ''}" @click=${() => { this.dispatchEvent(new CustomEvent('switch-session', { detail: s.id, bubbles: true, composed: true })); this.open = false; }}>
                       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
                       <span class="truncate">${s.title}</span>
                     </button>
@@ -303,7 +303,7 @@ export class ChatATPHistoryMenu extends PopoverBase {
                 <div style="padding: 4px 0;">
                   <div class="group-label">Older</div>
                   ${older.map(s => html`
-                    <button class="history-item ${this.activeId === s.id ? 'active' : ''}" @click=${() => { this.dispatchEvent(new CustomEvent('switch-session', { detail: s.id })); this.open = false; }}>
+                    <button class="history-item ${this.activeId === s.id ? 'active' : ''}" @click=${() => { this.dispatchEvent(new CustomEvent('switch-session', { detail: s.id, bubbles: true, composed: true })); this.open = false; }}>
                       <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
                       <span class="truncate">${s.title}</span>
                     </button>
@@ -313,7 +313,7 @@ export class ChatATPHistoryMenu extends PopoverBase {
             `}
           </div>
           <div class="popover-footer">
-            <button class="new-chat-btn" @click=${() => { this.dispatchEvent(new CustomEvent('new-chat')); this.open = false; }}>
+            <button class="new-chat-btn" @click=${() => { this.dispatchEvent(new CustomEvent('new-chat', { bubbles: true, composed: true })); this.open = false; }}>
               Start a new conversation
             </button>
           </div>

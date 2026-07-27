@@ -89,12 +89,14 @@ export class ChatATPCopilotButton extends LitElement {
     .window-container.sidebar.open { transform: translateX(0); }
 
     /* Fullscreen/Embedded Mode */
-    .window-container.fullscreen {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      min-height: 500px; /* fallback height */
-      border-radius: inherit;
+    .window-container.fullscreen,
+    .window-container.fullpage {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      border-radius: 0;
       border: none;
       box-shadow: none;
       transform: none !important;
@@ -196,7 +198,7 @@ export class ChatATPCopilotButton extends LitElement {
         <chatatp-chat-head
           .enabled=${true}
           .placeholder=${this.placeholder}
-          @open-panel=${this.openConfiguredMode}
+          @open-panel=${() => this.openConfiguredMode()}
         ></chatatp-chat-head>
       ` : ''}
 
@@ -214,9 +216,9 @@ export class ChatATPCopilotButton extends LitElement {
           .emptyHeading=${this.emptyHeading}
           .emptySubheading=${this.emptySubheading}
           .quickActions=${this.getResolvedQuickActions()}
-          @closeWindow="${this.closePanel}"
-          @expand="${() => { this.fullscreenUrl ? window.location.assign(this.fullscreenUrl) : this.mode = 'fullscreen'; }}"
-          @switch-mode="${() => { this.mode = this.mode === 'popup' ? 'sidebar' : 'popup'; this.isOpen = true; }}"
+          @closeWindow=${() => this.closePanel()}
+          @expand=${() => { this.fullscreenUrl ? window.location.assign(this.fullscreenUrl) : (this.mode = 'fullscreen', this.isOpen = true); }}
+          @switch-mode=${() => { this.mode = this.mode === 'popup' ? 'sidebar' : 'popup'; this.isOpen = true; }}
         >
           ${this.getResolvedQuickActions().map((action) => action.iconSlot ? html`<span slot=${action.iconSlot}><slot name=${action.iconSlot}></slot></span>` : '')}
         </chatatp-chat-interface>
