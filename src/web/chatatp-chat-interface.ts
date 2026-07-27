@@ -34,7 +34,7 @@ export class ChatATPChatInterface extends LitElement {
       display: flex;
       flex-direction: column;
       height: 100%;
-      background-color: var(--chatatp-background, #ffffff);
+      background: linear-gradient(180deg, rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.10), var(--chatatp-background, #ffffff) 42%);
       color: var(--chatatp-foreground, #0f172a);
       font-family: var(--chatatp-font, 'Inter', system-ui, sans-serif);
     }
@@ -44,7 +44,8 @@ export class ChatATPChatInterface extends LitElement {
       align-items: center;
       gap: 8px;
       padding: 12px 16px;
-      border-bottom: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
+      border-bottom: 1px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.18);
+      background: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.08);
     }
 
     .header-actions {
@@ -68,7 +69,7 @@ export class ChatATPChatInterface extends LitElement {
       transition: background-color 0.2s;
     }
     .icon-btn:hover {
-      background-color: rgba(var(--chatatp-muted-rgb, 241, 245, 249), 1);
+      background-color: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.12);
     }
     .icon-btn:disabled {
       opacity: 0.5;
@@ -113,7 +114,7 @@ export class ChatATPChatInterface extends LitElement {
 
     .action-card {
       border: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
-      background-color: rgba(var(--chatatp-card-rgb, 255, 255, 255), 0.4);
+      background-color: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.08);
       border-radius: 8px;
       font-size: 0.6875rem;
       overflow: hidden;
@@ -149,7 +150,7 @@ export class ChatATPChatInterface extends LitElement {
     .input-area {
       border-top: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
       padding: 12px 16px;
-      background-color: var(--chatatp-background, #ffffff);
+      background: linear-gradient(180deg, rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.10), var(--chatatp-background, #ffffff) 42%);
     }
 
     .input-wrapper {
@@ -158,7 +159,7 @@ export class ChatATPChatInterface extends LitElement {
       gap: 8px;
       border-radius: 16px;
       border: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
-      background-color: rgba(var(--chatatp-card-rgb, 255, 255, 255), 0.95);
+      background-color: color-mix(in srgb, var(--chatatp-secondary) 7%, #ffffff);
       padding: 10px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
@@ -207,6 +208,11 @@ export class ChatATPChatInterface extends LitElement {
   @property({ type: String }) baseUrl = '';
   @property({ type: String }) mode = 'popup';
   @property({ type: Boolean }) isActive = false;
+  @property({ type: String }) statusText = 'Ask anything about your agents, platforms or tools.';
+  @property({ type: String }) inputPlaceholder = 'Ask the copilot...';
+  @property({ type: String }) emptyHeading = 'What are we building today?';
+  @property({ type: String }) emptySubheading = 'Ask me anything, or pick a starting point below.';
+  @property({ type: Array }) quickActions : any[] = [];
 
   @state() messages : Message[] = [];
   @state() sessions : any[] = [];
@@ -228,10 +234,7 @@ export class ChatATPChatInterface extends LitElement {
         apiKey: this.apiKey,
         baseUrl: this.baseUrl || 'http://localhost:8000'
       });
-      // In a real app we'd fetch actual sessions here
-      this.sessions = [
-        { id: '1', title: 'New Chat', updatedAt: new Date() }
-      ];
+      this.loadSessions();
     }
   }
   
@@ -246,9 +249,48 @@ export class ChatATPChatInterface extends LitElement {
     }
   }
 
+  private async loadSessions() {
+    if (!this.client) return;
+    try {
+      const page = await this.client.conversations.list({
+        agent_id: parseInt(this.agentId, 10) || undefined,
+        external_user_id: this.userId
+      });
+      const conversations = await page.toArray();
+      this.sessions = conversations.map((conversation: any) => ({
+        id: conversation.id?.toString(),
+        title: conversation.title || conversation.user_display_name || `Conversation #${conversation.id}`,
+        updatedAt: conversation.last_message_at || conversation.updated_at || conversation.created_at
+      }));
+    } catch (error) {
+      console.warn('Failed to load copilot conversations', error);
+      this.sessions = [];
+    }
+  }
+
   private startNewChat() {
     this.conversationId = null;
     this.messages = [];
+  }
+
+  private async switchSession(sessionId: string | number) {
+    if (!this.client || !sessionId) return;
+    const numericId = Number(sessionId);
+    if (!Number.isFinite(numericId)) return;
+    this.conversationId = numericId;
+    try {
+      const page = await this.client.messages.list(numericId);
+      const history = await page.toArray();
+      this.messages = history.map((message: any) => ({
+        id: message.id?.toString?.() || `${message.sender}-${message.timestamp}`,
+        role: message.sender === 'user' ? 'user' : 'agent',
+        content: message.content || '',
+        toolCalls: Array.isArray(message.tool_calls) ? message.tool_calls : []
+      }));
+      this.scrollToBottom();
+    } catch (error) {
+      console.warn('Failed to load copilot conversation messages', error);
+    }
   }
 
   private scrollToBottom() {
@@ -317,14 +359,16 @@ export class ChatATPChatInterface extends LitElement {
     try {
       let currentContent = '';
       
-      const stream = this.client.chatStream({
-        agent_id: parseInt(this.agentId, 10) || 0,
-        external_user_id: this.userId,
-        user_display_name: this.userDisplayName,
-        message: userMessage,
-        // @ts-ignore
-        signal: this.abortController.signal
-      });
+      const stream = this.conversationId
+        ? this.client.messages.stream(this.conversationId, { content: userMessage })
+        : this.client.chatStream({
+            agent_id: parseInt(this.agentId, 10) || 0,
+            external_user_id: this.userId,
+            user_display_name: this.userDisplayName,
+            message: userMessage,
+            // @ts-ignore
+            signal: this.abortController.signal
+          });
 
       for await (const event of stream) {
         if (this.abortController?.signal.aborted) break;
@@ -378,6 +422,7 @@ export class ChatATPChatInterface extends LitElement {
       this.streamStatus = null;
       this.abortController = null;
       this.scrollToBottom();
+      this.loadSessions();
     }
   }
   
@@ -450,10 +495,12 @@ export class ChatATPChatInterface extends LitElement {
           <chatatp-history-menu 
             .title=${"New Chat"} 
             .sessions=${this.sessions}
+            .activeId=${this.conversationId?.toString() || ''}
             @new-chat=${this.startNewChat}
+            @switch-session=${(e: CustomEvent) => this.switchSession(e.detail)}
           ></chatatp-history-menu>
           <div style="font-size: 0.75rem; color: var(--chatatp-muted-foreground, #64748b); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${this.isGenerating ? (this.streamStatus || "Thinking...") : "Ask anything about your agents, platforms or tools."}
+            ${this.isGenerating ? (this.streamStatus || "Thinking...") : this.statusText}
           </div>
         </div>
 
@@ -476,8 +523,13 @@ export class ChatATPChatInterface extends LitElement {
         ${this.messages.length === 0 ? html`
           <chatatp-empty-state 
             .variant=${this.mode === 'popup' || this.mode === 'sidebar' ? 'widget' : 'page'}
+            .heading=${this.emptyHeading}
+            .subheading=${this.emptySubheading}
+            .prompts=${this.quickActions.length ? this.quickActions : undefined}
             @select-prompt=${(e: CustomEvent) => this.sendMessage(e.detail.prompt)}
-          ></chatatp-empty-state>
+          >
+            ${this.quickActions.map((action) => action.iconSlot ? html`<span slot=${action.iconSlot}><slot name=${action.iconSlot}></slot></span>` : '')}
+          </chatatp-empty-state>
         ` : ''}
 
         ${this.messages.map((msg, idx) => html`
@@ -507,7 +559,7 @@ export class ChatATPChatInterface extends LitElement {
         <div class="input-wrapper">
           <textarea 
             class="input-box" 
-            placeholder="Ask the copilot..."
+            .placeholder=${this.inputPlaceholder}
             .value=${this.inputValue}
             @input=${this.handleInput}
             @keydown=${this.handleKeyDown}

@@ -113,9 +113,18 @@ function App() {
           userDisplayName="John Doe"
           mode="sidebar" 
           position="right"
-          themePrimary="#0ea5e9"
-          themeSecondary="#6366f1"
+          themePrimary="blue"
+          themeSecondary="orange"
           placeholder="Ask me anything..."
+          statusText="Ask anything about your agents."
+          inputPlaceholder="Ask your agent..."
+          emptyHeading="What are we building today?"
+          emptySubheading="Choose a starter or ask freely."
+          fullscreenUrl="/copilot"
+          quickActions={[
+            { icon: <Bot size={16} />, title: "Build an Agent", subtitle: "Start from scratch", prompt: "Help me build an agent" },
+            { iconHtml: "<svg>...</svg>", title: "Connect Tools", subtitle: "APIs and integrations", prompt: "Help me connect tools" }
+          ]}
         />
       </header>
     </div>
@@ -156,9 +165,24 @@ Import `CopilotDirective` from `@chatatp/studio/angular` and use it on an elemen
   apiKey="YOUR_API_KEY"
   agentId="7"
   mode="fullscreen"
+  fullscreen-url="/copilot"
   placeholder="Ask me anything..."
 ></chatatp-copilot-button>
 ```
+
+
+## Copilot customization
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `placeholder` | `''` | Launcher pill text beside the copilot button. |
+| `statusText` | `'Ask anything about your agents, platforms or tools.'` | Header helper text when idle. |
+| `inputPlaceholder` | `'Ask the copilot...'` | Message textarea placeholder. |
+| `emptyHeading` | `'What are we building today?'` | Empty-state headline. |
+| `emptySubheading` | `'Ask me anything, or pick a starting point below.'` | Empty-state supporting text. |
+| `quickActions` / `quick-actions-json` | Built-in starter cards | Custom cards with `title`, `subtitle`, `prompt`, optional `iconHtml`, or React `icon`. |
+| `fullscreenUrl` | `''` | Route to navigate to when fullscreen is requested. |
+| `sidebarTarget` | `'body'` | CSS selector for the element shifted by sidebar padding. |
 
 ## Error handling
 
@@ -176,3 +200,43 @@ try {
 ## License
 
 MIT
+
+
+### Layout behavior
+
+- The launcher is visible for `popup`, `sidebar`, and `fullscreen`; clicking it opens the configured mode.
+- `popup` renders as a floating corner overlay above the current page, like a normal chatbot widget.
+- `sidebar` opens as a fixed side panel and shifts `sidebarTarget` with padding instead of covering the main app. Closing or switching away removes that padding.
+- `fullscreen` navigates to `fullscreenUrl` when provided; without it, it renders as an embedded full-size panel.
+
+### React icon quick actions
+
+React wrappers can pass icon provider components directly:
+
+```tsx
+import { Bot, Plug } from "lucide-react";
+
+<Copilot
+  apiKey="YOUR_API_KEY"
+  agentId={7}
+  quickActions={[
+    { icon: <Bot size={16} />, title: "Build an Agent", subtitle: "Start from scratch", prompt: "Help me build an agent" },
+    { icon: <Plug size={16} />, title: "Connect Tools", subtitle: "APIs and integrations", prompt: "Help me connect tools" }
+  ]}
+/>
+```
+
+### Vanilla quick actions
+
+Use `quick-actions-json` when configuring the Web Component from HTML:
+
+```html
+<chatatp-copilot-button
+  apiKey="YOUR_API_KEY"
+  agentId="7"
+  quick-actions-json='[
+    {"title":"Build an Agent","subtitle":"Start from scratch","prompt":"Help me build an agent"},
+    {"title":"Connect Tools","subtitle":"APIs and integrations","prompt":"Help me connect tools"}
+  ]'
+></chatatp-copilot-button>
+```

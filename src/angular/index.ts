@@ -17,6 +17,13 @@ export class CopilotDirective implements OnChanges {
   @Input() apiKey!: string;
   @Input() baseUrl = 'http://localhost:8000';
   @Input() placeholder = '';
+  @Input() statusText = 'Ask anything about your agents, platforms or tools.';
+  @Input() inputPlaceholder = 'Ask the copilot...';
+  @Input() emptyHeading = 'What are we building today?';
+  @Input() emptySubheading = 'Ask me anything, or pick a starting point below.';
+  @Input() quickActions: any[] = [];
+  @Input() fullscreenUrl = '';
+  @Input() sidebarTarget = 'body';
 
   constructor(private el: ElementRef) {
     // Replace the directive host with the custom element
@@ -38,5 +45,12 @@ export class CopilotDirective implements OnChanges {
     if (changes['apiKey']) el.apiKey = this.apiKey;
     if (changes['baseUrl']) el.baseUrl = this.baseUrl;
     if (changes['placeholder']) el.placeholder = this.placeholder;
+    if (changes['statusText']) el.statusText = this.statusText;
+    if (changes['inputPlaceholder']) el.inputPlaceholder = this.inputPlaceholder;
+    if (changes['emptyHeading']) el.emptyHeading = this.emptyHeading;
+    if (changes['emptySubheading']) el.emptySubheading = this.emptySubheading;
+    if (changes['quickActions']) el.quickActions = this.quickActions;
+    if (changes['fullscreenUrl']) el.fullscreenUrl = this.fullscreenUrl;
+    if (changes['sidebarTarget']) el.sidebarTarget = this.sidebarTarget;
   }
 }

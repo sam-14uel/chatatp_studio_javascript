@@ -3,7 +3,8 @@ import { customElement, property } from 'lit/decorators.js';
 import './copilot-avatar.js';
 
 export interface QuickPrompt {
-  iconHtml: string;
+  iconHtml?: string;
+  iconSlot?: string;
   title: string;
   subtitle: string;
   prompt: string;
@@ -103,7 +104,7 @@ export class ChatATPEmptyState extends LitElement {
       gap: 10px;
       border-radius: 12px;
       border: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
-      background-color: rgba(var(--chatatp-card-rgb, 255, 255, 255), 0.6);
+      background: linear-gradient(135deg, rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.10), rgba(var(--chatatp-card-rgb, 255, 255, 255), 0.82));
       padding: 12px;
       text-align: left;
       cursor: pointer;
@@ -120,7 +121,7 @@ export class ChatATPEmptyState extends LitElement {
       width: 28px;
       height: 28px;
       border-radius: 8px;
-      background-color: rgba(var(--chatatp-primary-rgb, 14, 165, 233), 0.1);
+      background-color: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.16);
       color: var(--chatatp-primary, #0ea5e9);
       display: flex;
       align-items: center;
@@ -130,7 +131,7 @@ export class ChatATPEmptyState extends LitElement {
     }
 
     .prompt-card:hover .icon-wrapper {
-      background-color: rgba(var(--chatatp-primary-rgb, 14, 165, 233), 0.2);
+      background-color: rgba(var(--chatatp-primary-rgb, 14, 165, 233), 0.18);
     }
 
     .text-wrapper {
@@ -159,6 +160,8 @@ export class ChatATPEmptyState extends LitElement {
 
   @property({ type: String }) variant : 'page' | 'widget' = 'page';
   @property({ type: Array }) prompts : QuickPrompt[] = DEFAULT_PROMPTS;
+  @property({ type: String }) heading = 'What are we building today?';
+  @property({ type: String }) subheading = 'Ask me anything, or pick a starting point below.';
 
   private handleSelect(prompt: string) {
     this.dispatchEvent(new CustomEvent('select-prompt', { detail: { prompt } }));
@@ -178,13 +181,15 @@ export class ChatATPEmptyState extends LitElement {
           ></chatatp-copilot-avatar>
         </div>
         
-        <h3>What are we building today?</h3>
-        <p>Ask me anything, or pick a starting point below.</p>
+        <h3>${this.heading}</h3>
+        <p>${this.subheading}</p>
 
         <div class="prompts-grid">
           ${this.prompts.map(p => html`
             <button class="prompt-card" @click=${() => this.handleSelect(p.prompt)}>
-              <div class="icon-wrapper" .innerHTML=${p.iconHtml}></div>
+              <div class="icon-wrapper">
+                ${p.iconSlot ? html`<slot name=${p.iconSlot}></slot>` : html`<span .innerHTML=${p.iconHtml || ''}></span>`}
+              </div>
               <div class="text-wrapper">
                 <div class="title">${p.title}</div>
                 <div class="subtitle">${p.subtitle}</div>

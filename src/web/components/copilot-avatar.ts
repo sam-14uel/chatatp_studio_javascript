@@ -88,8 +88,8 @@ export class CopilotAvatar extends LitElement {
       position: absolute;
       bottom: 0;
       border-radius: 50%;
-      background: rgba(var(--chatatp-primary-rgb, 14, 165, 233), 0.4);
-      border: 1px solid rgba(var(--chatatp-primary-rgb, 14, 165, 233), 0.5);
+      background: rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.4);
+      border: 1px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.5);
       pointer-events: none;
       animation: bubble-rise 2.1s ease-in forwards;
     }
@@ -101,7 +101,7 @@ export class CopilotAvatar extends LitElement {
       width: 4px;
       height: 4px;
       border-radius: 50%;
-      background: var(--chatatp-primary, #0ea5e9);
+      background: var(--chatatp-secondary, #6366f1);
       animation: sparkle-pop 0.55s ease-out forwards;
     }
 
@@ -333,38 +333,38 @@ export class CopilotAvatar extends LitElement {
             <defs>
               <linearGradient id="cp-head" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="var(--chatatp-primary, #0ea5e9)" stop-opacity="0.95" />
-                <stop offset="100%" stop-color="var(--chatatp-primary, #0ea5e9)" stop-opacity="0.75" />
+                <stop offset="100%" stop-color="var(--chatatp-secondary, #6366f1)" stop-opacity="0.85" />
               </linearGradient>
               <radialGradient id="cp-orb" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stop-color="#fff" stop-opacity="0.95" />
-                <stop offset="100%" stop-color="var(--chatatp-primary, #0ea5e9)" stop-opacity="0.4" />
+                <stop offset="100%" stop-color="var(--chatatp-secondary, #6366f1)" stop-opacity="0.45" />
               </radialGradient>
             </defs>
 
             <!-- antenna -->
-            <line x1="32" y1="6" x2="32" y2="14" stroke="var(--chatatp-primary, #0ea5e9)" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+            <line x1="32" y1="6" x2="32" y2="14" stroke="var(--chatatp-secondary, #6366f1)" stroke-width="2" stroke-linecap="round" opacity="0.8" />
             <circle
               cx="32" cy="5" r="2.8" fill="url(#cp-orb)"
               class="antenna-orb ${this.isNear ? 'antenna-alert' : ''}"
             />
 
             <!-- ear knobs -->
-            <circle cx="8" cy="34" r="4.2" fill="var(--chatatp-primary, #0ea5e9)" opacity="0.55" />
-            <circle cx="56" cy="34" r="4.2" fill="var(--chatatp-primary, #0ea5e9)" opacity="0.55" />
+            <circle cx="8" cy="34" r="4.2" fill="var(--chatatp-secondary, #6366f1)" opacity="0.65" />
+            <circle cx="56" cy="34" r="4.2" fill="var(--chatatp-secondary, #6366f1)" opacity="0.65" />
 
             <!-- head -->
             <rect x="10" y="14" width="44" height="38" rx="16" fill="url(#cp-head)" />
             <rect x="10" y="14" width="44" height="38" rx="16" fill="none" stroke="white" stroke-opacity="0.25" stroke-width="1" />
 
             <!-- visor -->
-            <rect x="16" y="24" width="32" height="18" rx="9" fill="#111827" opacity="0.88" />
+            <rect x="16" y="24" width="32" height="18" rx="9" fill="var(--chatatp-secondary, #6366f1)" opacity="0.92" />
 
             <!-- eyes -->
             <circle cx="24" cy="33" r="4.4" fill="white" style=${eyeClosed ? 'transform: scaleY(0.12); transform-origin: 24px 33px' : ''} />
             <circle cx="40" cy="33" r="4.4" fill="white" style=${rightEyeClosed ? 'transform: scaleY(0.12); transform-origin: 40px 33px' : ''} />
             
-            ${!eyeClosed ? html`<circle cx="24" cy="33" r="2.1" fill="#1f2937" style="transform: ${this.leftPupilTransform}" />` : ''}
-            ${!rightEyeClosed ? html`<circle cx="40" cy="33" r="2.1" fill="#1f2937" style="transform: ${this.rightPupilTransform}" />` : ''}
+            ${!eyeClosed ? html`<circle cx="24" cy="33" r="2.1" fill="var(--chatatp-primary, #0ea5e9)" style="transform: ${this.leftPupilTransform}" />` : ''}
+            ${!rightEyeClosed ? html`<circle cx="40" cy="33" r="2.1" fill="var(--chatatp-primary, #0ea5e9)" style="transform: ${this.rightPupilTransform}" />` : ''}
 
             <!-- mouth -->
             <g class=${this.isChuckling ? 'chuckle-active' : ''}>

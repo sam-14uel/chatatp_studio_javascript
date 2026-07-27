@@ -14,7 +14,14 @@ export const Copilot = defineComponent({
     avatarSrc: { type: String, default: '' },
     apiKey: { type: String, required: true },
     baseUrl: { type: String, default: 'http://localhost:8000' },
-    placeholder: { type: String, default: '' }
+    placeholder: { type: String, default: '' },
+    statusText: { type: String, default: 'Ask anything about your agents, platforms or tools.' },
+    inputPlaceholder: { type: String, default: 'Ask the copilot...' },
+    emptyHeading: { type: String, default: 'What are we building today?' },
+    emptySubheading: { type: String, default: 'Ask me anything, or pick a starting point below.' },
+    quickActions: { type: Array, default: () => [] },
+    fullscreenUrl: { type: String, default: '' },
+    sidebarTarget: { type: String, default: 'body' }
   },
   setup(props: any) {
     const copilotRef = ref<any>(null);
@@ -32,6 +39,13 @@ export const Copilot = defineComponent({
         copilotRef.value.apiKey = props.apiKey;
         copilotRef.value.baseUrl = props.baseUrl;
         copilotRef.value.placeholder = props.placeholder;
+        copilotRef.value.statusText = props.statusText;
+        copilotRef.value.inputPlaceholder = props.inputPlaceholder;
+        copilotRef.value.emptyHeading = props.emptyHeading;
+        copilotRef.value.emptySubheading = props.emptySubheading;
+        copilotRef.value.quickActions = props.quickActions;
+        copilotRef.value.fullscreenUrl = props.fullscreenUrl;
+        copilotRef.value.sidebarTarget = props.sidebarTarget;
       }
     };
 

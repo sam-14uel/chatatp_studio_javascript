@@ -9,7 +9,7 @@ export class ChatATPChatHead extends LitElement {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      z-index: 40;
+      z-index: 2147483647;
     }
     
     .launcher-btn {
