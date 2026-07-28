@@ -107,7 +107,7 @@ export class ChatATPExpandMenu extends PopoverBase {
         <button class="btn btn-primary" title="Expand to fullscreen" @click=${() => this.dispatchEvent(new CustomEvent('expand', { bubbles: true, composed: true }))}>
           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
         </button>
-        <button class="btn btn-chevron" title="More layout options" @click=${this.toggleOpen}>
+        <button class="btn btn-chevron" title="More layout options" @click=${() => this.toggleOpen()}>
           <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </button>
       </div>
@@ -265,7 +265,7 @@ export class ChatATPHistoryMenu extends PopoverBase {
     const older = list.slice(3);
 
     return html`
-      <button class="title-btn" title=${this.title} @click=${this.toggleOpen}>
+      <button class="title-btn" title=${this.title} @click=${() => this.toggleOpen()}>
         <span class="title-text">${this.title}</span>
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </button>

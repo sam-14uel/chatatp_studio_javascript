@@ -113,6 +113,9 @@ export class ChatATPCopilotButton extends LitElement {
     super.updated(changedProperties);
     if (changedProperties.has('mode')) {
       this.clearSidebarOffset();
+      if ((this.mode === 'fullscreen' || this.mode === 'fullpage') && !this.fullscreenUrl) {
+        this.isOpen = true;
+      }
     }
     this.syncSidebarOffset();
   }
@@ -184,6 +187,7 @@ export class ChatATPCopilotButton extends LitElement {
 
   render() {
     const themeCSS = getThemeVariables(this.themePrimary, this.themeSecondary);
+    const isEmbeddedFullscreen = (this.mode === 'fullscreen' || this.mode === 'fullpage') && !this.fullscreenUrl;
 
     const windowClasses = `window-container ${this.mode} ${this.position} ${this.isOpen ? 'open' : ''}`;
 
@@ -194,7 +198,7 @@ export class ChatATPCopilotButton extends LitElement {
         }
       </style>
 
-      ${!this.isOpen && this.mode !== 'hidden' ? html`
+      ${!this.isOpen && this.mode !== 'hidden' && !isEmbeddedFullscreen ? html`
         <chatatp-chat-head
           .enabled=${true}
           .placeholder=${this.placeholder}

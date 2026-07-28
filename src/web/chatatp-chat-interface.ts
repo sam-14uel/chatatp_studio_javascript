@@ -158,8 +158,8 @@ export class ChatATPChatInterface extends LitElement {
       align-items: flex-end;
       gap: 8px;
       border-radius: 16px;
-      border: 1px solid rgba(var(--chatatp-border-rgb, 226, 232, 240), 1);
-      background-color: color-mix(in srgb, var(--chatatp-secondary) 7%, #ffffff);
+      border: 1px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.28);
+      background: color-mix(in srgb, var(--chatatp-secondary) 20%, #ffffff);
       padding: 10px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
@@ -175,6 +175,8 @@ export class ChatATPChatInterface extends LitElement {
       max-height: 128px;
       outline: none;
       color: var(--chatatp-foreground, #0f172a) !important;
+      -webkit-text-fill-color: var(--chatatp-foreground, #0f172a) !important;
+      text-shadow: none !important;
       caret-color: var(--chatatp-primary, #0ea5e9);
       font-family: inherit;
     }
@@ -213,7 +215,7 @@ export class ChatATPChatInterface extends LitElement {
     .page-shell.collapsed { grid-template-columns: 72px minmax(0, 1fr); }
     .page-sidebar {
       border-right: 1px solid rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.2);
-      background: color-mix(in srgb, var(--chatatp-secondary) 10%, #ffffff);
+      background: linear-gradient(180deg, rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.34), rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.18));
       display: flex;
       flex-direction: column;
       min-width: 0;
@@ -269,7 +271,7 @@ export class ChatATPChatInterface extends LitElement {
       max-width: 960px;
       width: 100%;
       margin: 0 auto;
-      background: var(--chatatp-background, #ffffff);
+      background: color-mix(in srgb, var(--chatatp-secondary) 14%, #ffffff);
       box-shadow: 0 0 0 1px rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.08);
     }
 
@@ -607,14 +609,17 @@ export class ChatATPChatInterface extends LitElement {
           <button class="icon-btn" @click=${() => this.startNewChat()} title="New chat">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           </button>
+          <button class="icon-btn" @click=${() => this.dispatchEvent(new CustomEvent('switch-mode', { bubbles: true, composed: true }))} title=${this.mode === 'popup' ? 'Switch to sidebar' : 'Switch to popup'}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
+          </button>
           <chatatp-expand-menu 
             .switchLabel=${this.mode === 'popup' ? "Switch to sidebar" : "Switch to popup"}
             @expand=${() => this.dispatchEvent(new CustomEvent('expand', { bubbles: true, composed: true }))}
             @switch-mode=${() => this.dispatchEvent(new CustomEvent('switch-mode', { bubbles: true, composed: true }))}
           ></chatatp-expand-menu>
-          <button class="icon-btn" @click=${() => this.dispatchEvent(new CustomEvent('closeWindow'))} title="Close">
+          ${!this.isFullscreenLayout ? html`<button class="icon-btn" @click=${() => this.dispatchEvent(new CustomEvent('closeWindow', { bubbles: true, composed: true }))} title="Close">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-          </button>
+          </button>` : ''}
         </div>
       </div>
     `;
