@@ -275,6 +275,25 @@ export class ChatATPChatInterface extends LitElement {
       box-shadow: 0 0 0 1px rgba(var(--chatatp-secondary-rgb, 99, 102, 241), 0.08);
     }
 
+    .powered-branding {
+      margin-top: 8px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--chatatp-muted-foreground, #64748b);
+    }
+
+    .powered-branding a {
+      color: var(--chatatp-primary, #0ea5e9);
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .powered-branding a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
   `;
 
   @property({ type: String }) agentId = '';
@@ -348,6 +367,8 @@ export class ChatATPChatInterface extends LitElement {
   private startNewChat() {
     this.conversationId = null;
     this.messages = [];
+    this.streamStatus = null;
+    this.isGenerating = false;
   }
 
   private async switchSession(sessionId: string | number) {
@@ -609,13 +630,9 @@ export class ChatATPChatInterface extends LitElement {
           <button class="icon-btn" @click=${() => this.startNewChat()} title="New chat">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           </button>
-          <button class="icon-btn" @click=${() => this.dispatchEvent(new CustomEvent('switch-mode', { bubbles: true, composed: true }))} title=${this.mode === 'popup' ? 'Switch to sidebar' : 'Switch to popup'}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
-          </button>
           <chatatp-expand-menu 
             .switchLabel=${this.mode === 'popup' ? "Switch to sidebar" : "Switch to popup"}
             @expand=${() => this.dispatchEvent(new CustomEvent('expand', { bubbles: true, composed: true }))}
-            @switch-mode=${() => this.dispatchEvent(new CustomEvent('switch-mode', { bubbles: true, composed: true }))}
           ></chatatp-expand-menu>
           ${!this.isFullscreenLayout ? html`<button class="icon-btn" @click=${() => this.dispatchEvent(new CustomEvent('closeWindow', { bubbles: true, composed: true }))} title="Close">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -689,6 +706,16 @@ export class ChatATPChatInterface extends LitElement {
               </button>
             `
           }
+        </div>
+        <div class="powered-branding">
+          Powered by
+          <a
+            href="https://studio.chat-atp.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ChatATP Studio
+          </a>
         </div>
       </div>
     `;

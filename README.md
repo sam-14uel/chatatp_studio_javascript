@@ -115,6 +115,7 @@ function App() {
           position="right"
           themePrimary="blue"
           themeSecondary="orange"
+          themeMode="light"
           placeholder="Ask me anything..."
           statusText="Ask anything about your agents."
           inputPlaceholder="Ask your agent..."
@@ -204,10 +205,10 @@ MIT
 
 ### Layout behavior
 
-- The launcher is visible for `popup`, `sidebar`, and routed `fullscreen`; clicking it opens the configured mode or navigates to `fullscreenUrl`.
+- The launcher is visible for `popup`, `sidebar`, and routed `fullscreen`; clicking it opens the configured mode or updates the browser route with `history.pushState` and opens the fullscreen overlay for `fullscreenUrl`.
 - `popup` renders as a floating corner overlay above the current page, like a normal chatbot widget.
 - `sidebar` opens as a fixed side panel and shifts `sidebarTarget` with padding instead of covering the main app. Closing or switching away removes that padding.
-- `fullscreen` navigates to `fullscreenUrl` when provided; on the dedicated route, omit `fullscreenUrl` to render the full-page copilot screen.
+- `fullscreen` updates the browser route with `history.pushState` and opens the fullscreen overlay for `fullscreenUrl` when provided; on the dedicated route, omit `fullscreenUrl` to render the full-page copilot screen.
 
 ### Fullscreen route component
 
@@ -229,6 +230,7 @@ Use the floating widget with `fullscreenUrl` on normal pages, then register a de
   mode="fullscreen"
   themePrimary="blue"
   themeSecondary="orange"
+  themeMode="light"
 />
 ```
 

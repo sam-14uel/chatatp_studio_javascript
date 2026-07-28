@@ -9,6 +9,7 @@ export interface CopilotProps {
   position?: 'left' | 'right';
   themePrimary?: string;
   themeSecondary?: string;
+  themeMode?: 'light' | 'dark' | 'system';
   avatarSrc?: string;
   apiKey: string;
   baseUrl?: string;
@@ -38,6 +39,7 @@ export const Copilot: React.FC<CopilotProps> = ({
   position = 'right',
   themePrimary = '#0ea5e9',
   themeSecondary = '#6366f1',
+  themeMode = 'light',
   avatarSrc = '',
   apiKey,
   baseUrl = 'http://localhost:8000',
@@ -67,6 +69,7 @@ export const Copilot: React.FC<CopilotProps> = ({
       ref.current.position = position;
       ref.current.themePrimary = themePrimary;
       ref.current.themeSecondary = themeSecondary;
+      ref.current.themeMode = themeMode;
       ref.current.avatarSrc = avatarSrc;
       ref.current.apiKey = apiKey;
       ref.current.baseUrl = baseUrl;
@@ -79,7 +82,7 @@ export const Copilot: React.FC<CopilotProps> = ({
       ref.current.fullscreenUrl = fullscreenUrl;
       ref.current.sidebarTarget = sidebarTarget;
     }
-  }, [agentId, userId, userDisplayName, mode, position, themePrimary, themeSecondary, avatarSrc, apiKey, baseUrl, placeholder, statusText, inputPlaceholder, emptyHeading, emptySubheading, normalizedQuickActions, fullscreenUrl, sidebarTarget]);
+  }, [agentId, userId, userDisplayName, mode, position, themePrimary, themeSecondary, themeMode, avatarSrc, apiKey, baseUrl, placeholder, statusText, inputPlaceholder, emptyHeading, emptySubheading, normalizedQuickActions, fullscreenUrl, sidebarTarget]);
 
   return (
     <chatatp-copilot-button ref={ref}>

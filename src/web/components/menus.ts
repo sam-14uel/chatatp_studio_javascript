@@ -8,18 +8,22 @@ class PopoverBase extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('mousedown', this.handleDocClick);
+    document.addEventListener('click', this.handleDocClick);
     document.addEventListener('keydown', this.handleEsc);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('mousedown', this.handleDocClick);
+    document.removeEventListener('click', this.handleDocClick);
     document.removeEventListener('keydown', this.handleEsc);
   }
 
   private handleDocClick = (e: MouseEvent) => {
-    if (this.open && !this.contains(e.target as Node)) {
+    if (!this.open) return;
+
+    const path = e.composedPath();
+
+    if (!path.includes(this)) {
       this.open = false;
     }
   };
@@ -101,6 +105,17 @@ export class ChatATPExpandMenu extends PopoverBase {
 
   @property({ type: String }) switchLabel = "Switch mode";
 
+  private handleSwitchMode = () => {
+    this.dispatchEvent(
+      new CustomEvent('switch-mode', {
+        bubbles: true,
+        composed: true,
+      })
+    );
+
+    this.open = false;
+  };
+
   render() {
     return html`
       <div class="split-btn">
@@ -114,7 +129,7 @@ export class ChatATPExpandMenu extends PopoverBase {
       
       ${this.open ? html`
         <div class="popover">
-          <button class="menu-item" @click=${() => { this.dispatchEvent(new CustomEvent('switch-mode', { bubbles: true, composed: true })); this.open = false; }}>
+          <button class="menu-item" @click=${this.handleSwitchMode}>
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
             ${this.switchLabel}
           </button>

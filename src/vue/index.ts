@@ -11,6 +11,7 @@ export const Copilot = defineComponent({
     position: { type: String, default: 'right' },
     themePrimary: { type: String, default: '#0ea5e9' },
     themeSecondary: { type: String, default: '#6366f1' },
+    themeMode: { type: String, default: 'light' },
     avatarSrc: { type: String, default: '' },
     apiKey: { type: String, required: true },
     baseUrl: { type: String, default: 'http://localhost:8000' },
@@ -35,6 +36,7 @@ export const Copilot = defineComponent({
         copilotRef.value.position = props.position;
         copilotRef.value.themePrimary = props.themePrimary;
         copilotRef.value.themeSecondary = props.themeSecondary;
+        copilotRef.value.themeMode = props.themeMode;
         copilotRef.value.avatarSrc = props.avatarSrc;
         copilotRef.value.apiKey = props.apiKey;
         copilotRef.value.baseUrl = props.baseUrl;

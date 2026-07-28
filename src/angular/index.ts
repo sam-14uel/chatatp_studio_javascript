@@ -13,6 +13,7 @@ export class CopilotDirective implements OnChanges {
   @Input() position = 'right';
   @Input() themePrimary = '#0ea5e9';
   @Input() themeSecondary = '#6366f1';
+  @Input() themeMode = 'light';
   @Input() avatarSrc = '';
   @Input() apiKey!: string;
   @Input() baseUrl = 'http://localhost:8000';
@@ -41,6 +42,7 @@ export class CopilotDirective implements OnChanges {
     if (changes['position']) el.position = this.position;
     if (changes['themePrimary']) el.themePrimary = this.themePrimary;
     if (changes['themeSecondary']) el.themeSecondary = this.themeSecondary;
+    if (changes['themeMode']) el.themeMode = this.themeMode;
     if (changes['avatarSrc']) el.avatarSrc = this.avatarSrc;
     if (changes['apiKey']) el.apiKey = this.apiKey;
     if (changes['baseUrl']) el.baseUrl = this.baseUrl;
