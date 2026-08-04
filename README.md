@@ -24,6 +24,19 @@ Official JavaScript/TypeScript SDK for the [ChatATP Studio](https://studio.chat-
 npm install @chatatp/studio
 ```
 
+The SDK package also includes a bundled CLI binary. After installation, you can run:
+
+```bash
+npx studio --help
+```
+
+Or install it globally:
+
+```bash
+npm install -g @chatatp/studio
+studio --help
+```
+
 ## Quick start
 
 ```typescript
